@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+            background-image: url('微信截图_20250302204741.png');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .container {
+            display: flex;
+            gap: 62px; 
+            margin-top: 60px; 
+        }
+
+        .module-button {
+            text-decoration: none; /* 去除链接下划线 */
+            transition: transform 0.3s ease; /* 添加过渡效果 */
+        }
+
+        .module-button:hover {
+            transform: scale(1.05); /* 鼠标悬停时放大按钮 */
+        }
+
+        .module {
+            width: 300px;
+            height: 300px;
+            background-color: rgb(93, 93, 237);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 150px;
+            border-radius: 25px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 添加阴影效果 */
+            transition: background-color 0.3s ease; /* 添加背景颜色过渡效果 */
+        }
+
+        .module:hover {
+            background-color: rgb(70, 70, 200); /* 鼠标悬停时改变背景颜色 */
+        }
+
+        .module-text {
+            font-family:  cursive; 
+            font-size: 30px;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); /* 添加文字阴影 */
+        }
+
+    .page-title
+    {
+    font-family: cursive;
+    font-size: 58px;
+    text-align: center;
+    margin-bottom: 30px;
+    letter-spacing: 3px;
+    color: rgb(61, 60, 60);
+
+    }
+    </style>
+    <!-- 引入 Font Awesome 图标库 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <title>票据真伪鉴别系统</title>
+</head>
+
+<body>
+    <h1 class="page-title">
+   您好，欢迎使用！
+    </h1>
+    <div class="container">
+        <!-- 左侧按钮 -->
+        <a href="/导入界面/index3.html" class="module-button">
+            <div class="module">
+                <div class="module-text">自主加密与验证</div>
+                <i class="fa-solid fa-person"></i>
+            </div>
+        </a>
+        <!-- 右侧按钮 -->
+        <a href="/鉴别界面/index1.html" class="module-button">
+            <div class="module">
+                <div class="module-text">修改痕迹鉴定</div>
+                <i class="fa-solid fa-chart-simple"></i>
+            </div>
+        </a>
+    </div>
+</body>
+
+</html>
