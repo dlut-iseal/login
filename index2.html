@@ -1,99 +1,113 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-image系统功能分区</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         body {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+            font-family: 'Noto Sans SC', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
             margin: 0;
-            background-color: #f0f0f0;
-            background-image: url('微信截图_20250302204741.png');
-            background-size: cover;
-            background-position: center;
-        }
-
-        .container {
-            display: flex;
-            gap: 62px; 
-            margin-top: 60px; 
-        }
-
-        .module-button {
-            text-decoration: none; /* 去除链接下划线 */
-            transition: transform 0.3s ease; /* 添加过渡效果 */
-        }
-
-        .module-button:hover {
-            transform: scale(1.05); /* 鼠标悬停时放大按钮 */
-        }
-
-        .module {
-            width: 300px;
-            height: 300px;
-            background-color: rgb(93, 93, 237);
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
-            color: white;
-            font-size: 150px;
-            border-radius: 25px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 添加阴影效果 */
-            transition: background-color 0.3s ease; /* 添加背景颜色过渡效果 */
+            justify-content: center;
         }
-
-        .module:hover {
-            background-color: rgb(70, 70, 200); /* 鼠标悬停时改变背景颜色 */
+        .partition-title {
+            color: #fff;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 40px;
+            letter-spacing: 2px;
+            text-shadow: 0 4px 16px rgba(37,99,235,0.10);
         }
-
-        .module-text {
-            font-family:  cursive; 
-            font-size: 30px;
-            margin-bottom: 20px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); /* 添加文字阴影 */
+        .partition-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 40px;
+            width: 90vw;
+            max-width: 1100px;
         }
-
-    .page-title
-    {
-    font-family: cursive;
-    font-size: 58px;
-    text-align: center;
-    margin-bottom: 30px;
-    letter-spacing: 3px;
-    color: rgb(61, 60, 60);
-
-    }
+        .partition-block {
+            background: #fff;
+            border-radius: 24px;
+            box-shadow: 0 8px 32px rgba(37,99,235,0.10);
+            padding: 48px 32px;
+            text-align: center;
+            transition: transform 0.25s, box-shadow 0.25s;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        .partition-block:hover {
+            transform: translateY(-10px) scale(1.03);
+            box-shadow: 0 16px 48px rgba(37,99,235,0.18);
+        }
+        .block-icon {
+            font-size: 3rem;
+            color: #667eea;
+            margin-bottom: 24px;
+        }
+        .block-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2563eb;
+            margin-bottom: 18px;
+        }
+        .block-desc {
+            color: #6b7280;
+            font-size: 1.1rem;
+            margin-bottom: 0;
+        }
+        @media (max-width: 900px) {
+            .partition-grid { grid-template-columns: 1fr; }
+        }
+        .back-btn {
+            position: absolute;
+            top: 32px;
+            right: 48px;
+            background: linear-gradient(45deg, #2563eb, #667eea);
+            color: #fff;
+            padding: 10px 24px;
+            border-radius: 24px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1rem;
+            box-shadow: 0 4px 16px rgba(37,99,235,0.10);
+            transition: background 0.2s, transform 0.2s;
+            z-index: 100;
+        }
+        .back-btn:hover {
+            background: linear-gradient(45deg, #667eea, #2563eb);
+            transform: translateY(-2px) scale(1.04);
+        }
     </style>
-    <!-- 引入 Font Awesome 图标库 -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <title>票据真伪鉴别系统</title>
 </head>
 
 <body>
-    <h1 class="page-title">
-   您好，欢迎使用！
-    </h1>
-    <div class="container">
-        <!-- 左侧按钮 -->
-        <a href="/导入界面/index3.html" class="module-button">
-            <div class="module">
-                <div class="module-text">自主加密与验证</div>
-                <i class="fa-solid fa-person"></i>
-            </div>
-        </a>
-        <!-- 右侧按钮 -->
-        <a href="/鉴别界面/index1.html" class="module-button">
-            <div class="module">
-                <div class="module-text">修改痕迹鉴定</div>
-                <i class="fa-solid fa-chart-simple"></i>
-            </div>
-        </a>
+    <a href="/登录/index.html" class="back-btn">返回主页/登录</a>
+    <div class="partition-title">请选择您需要的功能分区</div>
+    <div class="partition-grid">
+        <div class="partition-block" onclick="window.location.href='/导入界面/index3.html'">
+            <div class="block-icon"><i class="fas fa-shield-alt"></i></div>
+            <div class="block-title">图像安全处理模块</div>
+            <div class="block-desc">为您的图像数据提供加密、防篡改等多重安全保障，适用于票据、证件、敏感图片等场景，支持批量操作与安全验证。</div>
+        </div>
+        <div class="partition-block" onclick="window.location.href='/鉴别界面/index1.html'">
+            <div class="block-icon"><i class="fas fa-brain"></i></div>
+            <div class="block-title">图像智能处理模块</div>
+            <div class="block-desc">基于AI的图片清晰度增强，支持超分辨率、去噪、修复等多种智能处理，助力图像智能升级。</div>
+        </div>
+        <div class="partition-block" onclick="window.location.href='/实用增强界面/index4.html'">
+            <div class="block-icon"><i class="fas fa-tools"></i></div>
+            <div class="block-title">实用性增强模块</div>
+            <div class="block-desc">高效便捷的图片及文档格式转换工具，支持多种主流格式批量互转，提升工作效率。</div>
+        </div>
     </div>
 </body>
 
