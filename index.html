@@ -1,303 +1,1377 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-image多模块图像综合处理系统</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        /* 全局样式 */
-        body {
-            font-family: sans-serif;
-            position: relative;
-            display: flex;
-            flex-direction: column; /* 垂直排列子元素 */
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
+ /* 基础样式重置 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-        /* 视频背景样式 */
-        #background-video {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            z-index: -1;
-        }
-        /* 登录容器样式 */
-        .login-container,
-        .register-container {
-            background-color: rgba(255, 255, 255, 0.95);
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-            width: 320px;
-            animation: fadeIn 0.5s ease-out; /* 添加淡入动画 */
-            position: relative;
-            top: 55px;
-        }
+body {
+    font-family: 'Noto Sans SC', sans-serif;
+    line-height: 1.6;
+    color: #333;
+    overflow-x: hidden;
+}
 
-        /* 淡入动画 */
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+/* 导航栏样式 */
+.navbar {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    z-index: 1000;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+}
 
-        /* 登录标题样式 */
-        .login-container h2,
-        .register-container h2 {
-            text-align: center;
-            margin-bottom: 30px;
-            color: #333;
-            font-weight: 600;
-            letter-spacing: 1px;
-        }
+.nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 70px;
+}
 
-        /* 输入组样式 */
-        .input-group {
-            margin-bottom: 20px;
-        }
+.nav-logo {
+    display: flex;
+    align-items: center;
+    font-size: 24px;
+    font-weight: 700;
+    color: #2563eb;
+}
 
-        /* 表单标签样式 */
-        .input-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: #666;
-            font-size: 14px;
-        }
+.nav-logo i {
+    margin-right: 10px;
+    font-size: 28px;
+}
 
-        /* 表单输入框样式 */
-        .input-group input[type="text"],
-        .input-group input[type="password"] {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 14px;
-            transition: border-color 0.3s ease;
-        }
+.nav-menu {
+    display: flex;
+    list-style: none;
+    gap: 30px;
+}
 
-        /* 输入框聚焦样式 */
-        .input-group input[type="text"]:focus,
-        .input-group input[type="password"]:focus {
-            outline: none;
-            border-color: #007BFF;
-            box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
-        }
+.nav-link {
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+    transition: color 0.3s ease;
+    position: relative;
+}
 
-        /* 提交按钮样式 */
-        .login-container input[type="submit"],
-        .register-container input[type="submit"] {
-            width: 100%;
-            padding: 12px;
-            background-color: #007BFF;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: 500;
-            transition: background-color 0.3s ease;
-        }
+.nav-link:hover {
+    color: #2563eb;
+}
 
-        /* 提交按钮悬停效果 */
-        .login-container input[type="submit"]:hover,
-        .register-container input[type="submit"]:hover {
-            background-color: #0056b3;
-        }
+.nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: #2563eb;
+    transition: width 0.3s ease;
+}
 
-        /*切换链接效果*/
-        .login-container a,
-        .register-container a {
-            display: block;
-            text-align: center;
-            margin-top: 15px;
-            color: #007BFF;
-            text-decoration: none;
-            font-size: 14px;
-        }
+.nav-link:hover::after {
+    width: 100%;
+}
+
+.hamburger {
+    display: none;
+    flex-direction: column;
+    cursor: pointer;
+}
+
+.bar {
+    width: 25px;
+    height: 3px;
+    background: #333;
+    margin: 3px 0;
+    transition: 0.3s;
+}
+
+/* 首页英雄区域 */
+.hero-section {
+    height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+    z-index: 2;
+    position: relative;
+}
+
+.hero-text {
+    color: white;
+}
+
+.hero-title {
+    font-size: 4rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    background: linear-gradient(45deg, #fff, #f0f9ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.hero-subtitle {
+    font-size: 2rem;
+    font-weight: 500;
+    margin-bottom: 20px;
+    color: #e0e7ff;
+}
+
+.hero-description {
+    font-size: 1.2rem;
+    margin-bottom: 40px;
+    color: #c7d2fe;
+    line-height: 1.8;
+}
+
+.hero-buttons {
+    display: flex;
+    gap: 20px;
+}
+
+.btn {
+    padding: 15px 30px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.btn-primary {
+    background: #fff;
+    color: #2563eb;
+    box-shadow: 0 10px 30px rgba(255, 255, 255, 0.3);
+}
+
+.btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 40px rgba(255, 255, 255, 0.4);
+}
+
+.btn-secondary {
+    background: transparent;
+    color: white;
+    border: 2px solid white;
+}
+
+.btn-secondary:hover {
+    background: white;
+    color: #2563eb;
+    transform: translateY(-3px);
+}
+
+.hero-visual {
+    position: relative;
+    height: 400px;
+}
+
+.floating-card, .floating-shield {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    color: white;
+    animation: float 6s ease-in-out infinite;
+}
+
+.floating-card {
+    width: 120px;
+    height: 120px;
+    top: 50px;
+    left: 50px;
+    animation-delay: 0s;
+}
+
+.floating-shield {
+    width: 100px;
+    height: 100px;
+    top: 200px;
+    right: 50px;
+    animation-delay: 3s;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-20px); }
+}
+
+.scroll-indicator {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: white;
+    text-align: center;
+}
+
+.scroll-arrow {
+    width: 30px;
+    height: 30px;
+    border: 2px solid white;
+    border-top: none;
+    border-left: none;
+    transform: rotate(45deg);
+    animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% { transform: translateY(0) rotate(45deg); }
+    40% { transform: translateY(-10px) rotate(45deg); }
+    60% { transform: translateY(-5px) rotate(45deg); }
+}
+
+/* 通用容器样式 */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.section-title {
+    text-align: center;
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 60px;
+    color: #1f2937;
+    position: relative;
+}
+
+.section-title::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 4px;
+    background: linear-gradient(45deg, #2563eb, #667eea);
+    border-radius: 2px;
+}
+
+/* 服务卡片区域 */
+.services-section {
+    padding: 100px 0;
+    background: #f8fafc;
+}
+
+.services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    margin-top: 60px;
+}
+
+.service-card {
+    background: white;
+    padding: 40px 30px;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.service-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+.card-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(45deg, #2563eb, #667eea);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    font-size: 2rem;
+    color: white;
+}
+
+.service-card h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+    color: #1f2937;
+}
+
+.service-card p {
+    color: #6b7280;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+.card-hover {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, #2563eb, #667eea);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    border-radius: 20px;
+}
+
+.service-card:hover .card-hover {
+    opacity: 1;
+}
+
+.card-hover span {
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+/* 团队介绍区域 */
+.team-section {
+    padding: 100px 0;
+    background: white;
+}
+
+.team-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+}
+
+.team-text h3 {
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: #1f2937;
+}
+
+.team-text p {
+    font-size: 1.1rem;
+    color: #6b7280;
+    line-height: 1.8;
+    margin-bottom: 40px;
+}
+
+.team-stats {
+    display: flex;
+    gap: 40px;
+}
+
+.stat {
+    text-align: center;
+}
+
+.stat-number {
+    display: block;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #2563eb;
+    margin-bottom: 5px;
+}
+
+.stat-label {
+    color: #6b7280;
+    font-weight: 500;
+}
+
+.team-visual {
+    display: flex;
+    justify-content: center;
+}
+
+.team-avatar {
+    width: 200px;
+    height: 200px;
+    background: linear-gradient(45deg, #2563eb, #667eea);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 4rem;
+    color: white;
+    box-shadow: 0 20px 40px rgba(37, 99, 235, 0.3);
+}
+
+/* 发票安全区域 */
+.security-section {
+    padding: 100px 0;
+    background: #f8fafc;
+}
+
+.security-features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 40px;
+}
+
+.feature {
+    background: white;
+    padding: 40px 30px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    transition: transform 0.3s ease;
+}
+
+.feature:hover {
+    transform: translateY(-5px);
+}
+
+.feature-icon {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(45deg, #2563eb, #667eea);
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: white;
+    flex-shrink: 0;
+}
+
+.feature-text h4 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #1f2937;
+}
+
+.feature-text p {
+    color: #6b7280;
+    line-height: 1.6;
+}
+
+/* 专业方法区域 */
+.method-section {
+    padding: 100px 0;
+    background: white;
+}
+
+.method-steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+}
+
+.step {
+    text-align: center;
+    padding: 30px 20px;
+    position: relative;
+}
+
+.step-number {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(45deg, #2563eb, #667eea);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: white;
+    margin: 0 auto 20px;
+    box-shadow: 0 10px 20px rgba(37, 99, 235, 0.3);
+}
+
+.step-content h4 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+    color: #1f2937;
+}
+
+.step-content p {
+    color: #6b7280;
+    line-height: 1.6;
+}
+
+/* 联系区域 */
+.contact-section {
+    padding: 100px 0;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.contact-section .section-title {
+    color: white;
+}
+
+.contact-info {
+    display: flex;
+    justify-content: center;
+    gap: 60px;
+    flex-wrap: wrap;
+}
+
+.contact-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-size: 1.1rem;
+}
+
+.contact-item i {
+    font-size: 1.5rem;
+    color: #e0e7ff;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .hamburger {
+        display: flex;
+    }
+    
+    .nav-menu {
+        position: fixed;
+        left: -100%;
+        top: 70px;
+        flex-direction: column;
+        background-color: white;
+        width: 100%;
+        text-align: center;
+        transition: 0.3s;
+        box-shadow: 0 10px 27px rgba(0, 0, 0, 0.05);
+        padding: 20px 0;
+    }
+    
+    .nav-menu.active {
+        left: 0;
+    }
+    
+    .hero-content {
+        grid-template-columns: 1fr;
+        text-align: center;
+        gap: 40px;
+    }
+    
+    .hero-title {
+        font-size: 3rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 1.5rem;
+    }
+    
+    .hero-buttons {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    
+    .team-content {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+    
+    .team-stats {
+        justify-content: center;
+    }
+    
+    .contact-info {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .services-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .security-features {
+        grid-template-columns: 1fr;
+    }
+    
+    .method-steps {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* 平滑滚动 */
+html {
+    scroll-behavior: smooth;
+}
+
+/* 加载动画 */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.service-card, .feature, .step {
+    animation: fadeInUp 0.6s ease forwards;
+}
+
+.service-card:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.service-card:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+.logo-img {
+    height: 38px;
+    width: 38px;
+    object-fit: contain;
+    margin-right: 10px;
+    vertical-align: middle;
+}
+
+.hero-logo-img {
+    display: block;
+    margin: 0 auto 24px auto;
+    height: 100px;
+    width: 100px;
+    object-fit: contain;
+    filter: drop-shadow(0 4px 16px rgba(37,99,235,0.10));
+}
+
+.auth-modal {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeInBg 0.3s;
+}
+@keyframes fadeInBg {
+    from { background: rgba(0,0,0,0); }
+    to { background: rgba(0,0,0,0.4); }
+}
+.auth-container {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(37,99,235,0.10);
+    padding: 40px 32px 32px 32px;
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    position: relative;
+    opacity: 0;
+    transform: translateY(40px) scale(0.98);
+    transition: opacity 0.35s cubic-bezier(.4,0,.2,1), transform 0.35s cubic-bezier(.4,0,.2,1);
+}
+.auth-modal.show .auth-container {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+.auth-modal.hide .auth-container {
+    opacity: 0;
+    transform: translateY(40px) scale(0.98);
+}
+.auth-logo {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto 16px auto;
+    object-fit: contain;
+}
+.auth-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #2563eb;
+    margin-bottom: 24px;
+}
+.auth-tabs {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 24px;
+}
+.auth-tab {
+    flex: 1;
+    padding: 10px 0;
+    cursor: pointer;
+    font-weight: 600;
+    color: #6b7280;
+    border-bottom: 2px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+}
+.auth-tab.active {
+    color: #2563eb;
+    border-bottom: 2px solid #2563eb;
+}
+.auth-form {
+    display: none;
+    text-align: left;
+    position: absolute;
+    left: 0; top: 0; width: 100%;
+    transition: transform 0.4s cubic-bezier(.4,0,.2,1), opacity 0.4s cubic-bezier(.4,0,.2,1);
+    opacity: 0;
+    z-index: 1;
+}
+.auth-form.active {
+    display: block;
+    opacity: 1;
+    position: relative;
+    z-index: 2;
+    transform: translateX(0);
+}
+.auth-form.slide-left {
+    transform: translateX(-60px);
+    opacity: 0;
+}
+.auth-form.slide-right {
+    transform: translateX(60px);
+    opacity: 0;
+}
+.form-group { margin-bottom: 18px; }
+.form-group label { display: block; margin-bottom: 6px; color: #374151; font-weight: 500; }
+.form-group input {
+    width: 100%; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 1rem; outline: none; transition: border-color 0.2s;
+}
+.form-group input:focus { border-color: #2563eb; }
+.auth-btn {
+    width: 100%; padding: 12px 0; background: linear-gradient(45deg, #2563eb, #667eea); color: #fff; border: none; border-radius: 6px; font-size: 1.1rem; font-weight: 600; cursor: pointer; margin-top: 10px; transition: background 0.2s;
+}
+.auth-btn:hover { background: linear-gradient(45deg, #667eea, #2563eb); }
+.auth-close {
+    position: absolute; right: 16px; top: 12px; font-size: 2rem; color: #aaa; cursor: pointer; z-index: 10;
+} 
     </style>
-    <title>票据真伪鉴别系统</title>
 </head>
-
 <body>
-    <!-- 背景视频 -->
-    <video id="background-video" src="video.mp4" loop autoplay muted></video>
-    <!-- 登录栏 -->
-    <div class="login-container">
-        <h2>登录</h2>
-        <form action="#" id="loginForm">
-            <div class="input-group">
-                <label for="username">用户名:</label>
-                <input type="text" id="username" name="username" required>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <img src="{{ url_for('static', filename='登录/tubiao.png') }}" alt="Multi-image Logo" class="logo-img" />
+                <span>Multi-image多模块图像综合处理系统</span>
             </div>
-            <div class="input-group">
-                <label for="password">密码:</label>
-                <input type="password" id="password" name="password" required>
+            <ul class="nav-menu">
+                <li><a href="#home" class="nav-link">首页</a></li>
+                <li><a href="#team" class="nav-link">团队介绍</a></li>
+                <li><a href="#security" class="nav-link">发票安全</a></li>
+                <li><a href="#method" class="nav-link">专业方法</a></li>
+                <li><a href="#" class="nav-link" id="openAuthModal">登录/注册</a></li>
+            </ul>
+            <div class="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
             </div>
-            <input type="submit" value="登录">
-        </form>
-        <a href="#" id="showRegister">没有账号？注册</a>
-    </div>
+        </div>
+    </nav>
 
-    <!-- 注册栏 -->
-    <div class="register-container" style="display: none;">
-        <h2>注册</h2>
-        <form action="#" id="registerForm">
-            <div class="input-group">
-                <label for="registerUsername">用户名:</label>
-                <input type="text" id="registerUsername" name="registerUsername" required>
+    <!-- 第一页：首页 -->
+    <section id="home" class="hero-section">
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1 class="hero-title">Multi-image</h1>
+                <h2 class="hero-subtitle">多模块图像综合处理系统</h2>
+                <div class="hero-buttons">
+                    <a href="#team" class="btn btn-primary">了解更多</a>
+                </div>
             </div>
-            <div class="input-group">
-                <label for="registerPassword">密码:</label>
-                <input type="password" id="registerPassword" name="registerPassword" required>
+            <div class="hero-visual">
+                <!-- 图标已在上方展示，这里可去除浮动图标 -->
             </div>
-            <input type="submit" value="注册">
-        </form>
-        <a href="#" id="showLogin">已有账号？登录</a>
+        </div>
+        <div class="scroll-indicator">
+            <div class="scroll-arrow"></div>
+        </div>
+    </section>
+
+    <!-- 第二页：三个可点击的block -->
+    <section id="services" class="services-section">
+        <div class="container">
+            <h2 class="section-title">我们的服务</h2>
+            <div class="services-grid">
+                <!-- 团队介绍 -->
+                <div class="service-card" onclick="scrollToSection('team')">
+                    <div class="card-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3>团队介绍</h3>
+                    <p>了解我们专业的团队，他们拥有丰富的发票安全经验</p>
+                    <div class="card-hover">
+                        <span>点击了解更多</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                </div>
+
+                <!-- 发票安全 -->
+                <div class="service-card" onclick="scrollToSection('security')">
+                    <div class="card-icon">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <h3>发票安全</h3>
+                    <p>全面的发票安全解决方案，保护您的业务免受风险</p>
+                    <div class="card-hover">
+                        <span>点击了解更多</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                </div>
+
+                <!-- 专业方法 -->
+                <div class="service-card" onclick="scrollToSection('method')">
+                    <div class="card-icon">
+                        <i class="fas fa-cogs"></i>
+                    </div>
+                    <h3>专业方法</h3>
+                    <p>采用先进的技术和方法，确保发票处理的专业性和准确性</p>
+                    <div class="card-hover">
+                        <span>点击了解更多</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 团队介绍页面 -->
+    <section id="team" class="team-section">
+        <div class="container">
+            <h2 class="section-title">团队介绍</h2>
+            <div class="team-content">
+                <div class="team-text">
+                    <h3>专业的发票安全团队</h3>
+                    <p>我们的团队由经验丰富的发票安全专家组成，拥有多年的行业经验和专业知识。我们致力于为客户提供最安全、最可靠的发票解决方案。</p>
+                    <div class="team-stats">
+                        <div class="stat">
+                            <span class="stat-number">10+</span>
+                            <span class="stat-label">年经验</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number">1000+</span>
+                            <span class="stat-label">客户服务</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number">99.9%</span>
+                            <span class="stat-label">安全率</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="team-visual">
+                    <div class="team-avatar">
+                        <i class="fas fa-user-tie"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 发票安全页面 -->
+    <section id="security" class="security-section">
+        <div class="container">
+            <h2 class="section-title">发票安全</h2>
+            <div class="security-content">
+                <div class="security-features">
+                    <div class="feature">
+                        <div class="feature-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <div class="feature-text">
+                            <h4>多重安全防护</h4>
+                            <p>采用多层次安全防护机制，确保发票数据的安全性</p>
+                        </div>
+                    </div>
+                    <div class="feature">
+                        <div class="feature-icon">
+                            <i class="fas fa-eye-slash"></i>
+                        </div>
+                        <div class="feature-text">
+                            <h4>隐私保护</h4>
+                            <p>严格的数据隐私保护政策，保护客户敏感信息</p>
+                        </div>
+                    </div>
+                    <div class="feature">
+                        <div class="feature-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="feature-text">
+                            <h4>24/7监控</h4>
+                            <p>全天候安全监控，及时发现和处理潜在风险</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 专业方法页面 -->
+    <section id="method" class="method-section">
+        <div class="container">
+            <h2 class="section-title">专业方法</h2>
+            <div class="method-content">
+                <div class="method-steps">
+                    <div class="step">
+                        <div class="step-number">01</div>
+                        <div class="step-content">
+                            <h4>需求分析</h4>
+                            <p>深入了解客户需求，制定个性化解决方案</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">02</div>
+                        <div class="step-content">
+                            <h4>方案设计</h4>
+                            <p>基于先进技术，设计最优的安全方案</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">03</div>
+                        <div class="step-content">
+                            <h4>实施部署</h4>
+                            <p>专业团队进行系统部署和配置</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">04</div>
+                        <div class="step-content">
+                            <h4>持续优化</h4>
+                            <p>定期评估和优化，确保系统持续高效运行</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 联系页面 -->
+    <section id="contact" class="contact-section">
+        <div class="container">
+            <h2 class="section-title">联系我们</h2>
+            <div class="contact-content">
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <i class="fas fa-phone"></i>
+                        <span>400-123-4567</span>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-envelope"></i>
+                        <span>info@multi-image.com</span>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>北京市朝阳区科技园区</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 登录/注册弹窗表单 -->
+    <div id="authModal" class="auth-modal" style="display:none;">
+        <div class="auth-container">
+            <span class="auth-close" id="closeAuthModal">&times;</span>
+            <img src="{{ url_for('static', filename='登录/tubiao.png') }}" alt="Multi-image Logo" class="auth-logo" />
+            <div class="auth-title">Multi-image系统账户</div>
+            <div class="auth-tabs">
+                <div class="auth-tab active" id="loginTab">登录</div>
+                <div class="auth-tab" id="registerTab">注册</div>
+            </div>
+            <form id="loginForm" class="auth-form active">
+                <div class="form-group">
+                    <label for="login-username">用户名</label>
+                    <input type="text" id="login-username" name="username" required placeholder="请输入用户名">
+                </div>
+                <div class="form-group">
+                    <label for="login-password">密码</label>
+                    <input type="password" id="login-password" name="password" required placeholder="请输入密码">
+                </div>
+                <button type="submit" class="auth-btn">登录</button>
+            </form>
+            <form id="registerForm" class="auth-form">
+                <div class="form-group">
+                    <label for="register-username">用户名</label>
+                    <input type="text" id="register-username" name="username" required placeholder="请输入用户名">
+                </div>
+                <div class="form-group">
+                    <label for="register-password">密码</label>
+                    <input type="password" id="register-password" name="password" required placeholder="请输入密码">
+                </div>
+                <button type="submit" class="auth-btn">注册</button>
+            </form>
+        </div>
     </div>
 
     <script>
-        // 设定程序员访问账户
-        const validUsername = "admin";
-        const validPassword = "20250212";
+        // 导航栏功能
+document.addEventListener('DOMContentLoaded', function() {
+    const hamburger = document.querySelector('.hamburger');
+    const navMenu = document.querySelector('.nav-menu');
+    const navLinks = document.querySelectorAll('.nav-link');
 
-        document.addEventListener('DOMContentLoaded', function () {
-            const loginForm = document.getElementById('loginForm');
-            const registerForm = document.getElementById('registerForm');
-            const showRegisterLink = document.getElementById('showRegister');
-            const showLoginLink = document.getElementById('showLogin');
+    // 汉堡菜单切换
+    hamburger.addEventListener('click', function() {
+        hamburger.classList.toggle('active');
+        navMenu.classList.toggle('active');
+    });
 
-            // 登录表单提交事件
-            if (loginForm) {
-                loginForm.addEventListener('submit', function (e) {
-                    e.preventDefault();
-                    login();
-                });
-            }
+    // 点击导航链接时关闭菜单
+    navLinks.forEach(link => {
+        link.addEventListener('click', function() {
+            hamburger.classList.remove('active');
+            navMenu.classList.remove('active');
+        });
+    });
 
-            // 注册表单提交事件
-            if (registerForm) {
-                registerForm.addEventListener('submit', function (e) {
-                    e.preventDefault();
-                    register();
-                });
-            }
+    // 滚动时导航栏样式变化
+    window.addEventListener('scroll', function() {
+        const navbar = document.querySelector('.navbar');
+        if (window.scrollY > 100) {
+            navbar.style.background = 'rgba(255, 255, 255, 0.98)';
+            navbar.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.15)';
+        } else {
+            navbar.style.background = 'rgba(255, 255, 255, 0.95)';
+            navbar.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.1)';
+        }
+    });
 
-            // 显示注册表单
-            if (showRegisterLink) {
-                showRegisterLink.addEventListener('click', showRegister);
-            }
+    // 平滑滚动到指定区域
+    window.scrollToSection = function(sectionId) {
+        const section = document.getElementById(sectionId);
+        if (section) {
+            const offsetTop = section.offsetTop - 70; // 减去导航栏高度
+            window.scrollTo({
+                top: offsetTop,
+                behavior: 'smooth'
+            });
+        }
+    };
 
-            // 显示登录表单
-            if (showLoginLink) {
-                showLoginLink.addEventListener('click', showLogin);
+    // 滚动动画
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver(function(entries) {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
             }
         });
+    }, observerOptions);
 
-        // 显示注册表单的函数
-        function showRegister() {
-            const loginContainer = document.querySelector('.login-container');
-            const registerContainer = document.querySelector('.register-container');
-            loginContainer.style.display = 'none';
-            registerContainer.style.display = 'block';
-        }
+    // 观察需要动画的元素
+    const animatedElements = document.querySelectorAll('.service-card, .feature, .step, .team-content, .security-features, .method-steps');
+    animatedElements.forEach(el => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(30px)';
+        el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        observer.observe(el);
+    });
 
-        // 显示登录表单的函数
-        function showLogin() {
-            const loginContainer = document.querySelector('.login-container');
-            const registerContainer = document.querySelector('.register-container');
-            registerContainer.style.display = 'none';
-            loginContainer.style.display = 'block';
-        }
-
-        async function login() {
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
+    // 数字动画
+    function animateNumbers() {
+        const stats = document.querySelectorAll('.stat-number');
+        stats.forEach(stat => {
+            const target = parseInt(stat.textContent);
+            const increment = target / 50;
+            let current = 0;
             
-            if (!username || !password) {
-                alert('请输入用户名和密码');
-                return;
-            }
-
-            // 检查是否是程序员访问账户
-            if (username === 'admin' && password === '20250212') {
-                // 为管理员账户设置特殊标识
-                localStorage.setItem('user_id', 'admin');
-                localStorage.setItem('username', 'admin');
-                localStorage.setItem('is_admin', 'true');
-                alert('管理员登录成功！');
-                window.location.href = 'https://dlut-iseal.github.io/function/';
-                return;
-            }
-            
-            try {
-                const response = await fetch('/api/login', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ username, password })
-                });
-                
-                const data = await response.json();
-                if (data.success) {
-                    // 存储用户信息
-                    localStorage.setItem('user_id', data.user_id);
-                    localStorage.setItem('username', data.username);
-                    localStorage.setItem('is_admin', 'false');
-                    alert(`欢迎回来，${data.username}！`);
-                    window.location.href = '..https://dlut-iseal.github.io/function/';
-                } else {
-                    alert(data.message || '登录失败');
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    current = target;
+                    clearInterval(timer);
                 }
-            } catch (error) {
-                console.error('登录失败:', error);
-                alert('登录失败，请重试');
-            }
-        }
+                stat.textContent = Math.floor(current) + (stat.textContent.includes('+') ? '+' : '') + (stat.textContent.includes('%') ? '%' : '');
+            }, 30);
+        });
+    }
 
-        async function register() {
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-            
-            if (!username || !password) {
-                alert('请输入用户名和密码');
-                return;
+    // 当团队部分进入视口时启动数字动画
+    const teamSection = document.getElementById('team');
+    const teamObserver = new IntersectionObserver(function(entries) {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                animateNumbers();
+                teamObserver.unobserve(entry.target);
             }
-            
-            try {
-                const response = await fetch('/api/register', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ username, password })
-                });
-                
-                const data = await response.json();
-                if (data.success) {
-                    alert('注册成功，请登录');
-                    document.getElementById('password').value = '';
-                    showLogin();
-                } else {
-                    alert(data.message || '注册失败');
+        });
+    }, { threshold: 0.5 });
+
+    if (teamSection) {
+        teamObserver.observe(teamSection);
+    }
+
+    // 添加鼠标悬停效果
+    const serviceCards = document.querySelectorAll('.service-card');
+    serviceCards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-10px) scale(1.02)';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0) scale(1)';
+        });
+    });
+
+    // 添加滚动进度指示器
+    const progressBar = document.createElement('div');
+    progressBar.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 0%;
+        height: 3px;
+        background: linear-gradient(45deg, #2563eb, #667eea);
+        z-index: 1001;
+        transition: width 0.1s ease;
+    `;
+    document.body.appendChild(progressBar);
+
+    window.addEventListener('scroll', function() {
+        const scrollTop = window.pageYOffset;
+        const docHeight = document.body.scrollHeight - window.innerHeight;
+        const scrollPercent = (scrollTop / docHeight) * 100;
+        progressBar.style.width = scrollPercent + '%';
+    });
+
+    // 添加键盘导航支持
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            hamburger.classList.remove('active');
+            navMenu.classList.remove('active');
+        }
+    });
+
+    // 添加触摸手势支持（移动端）
+    let touchStartY = 0;
+    let touchEndY = 0;
+
+    document.addEventListener('touchstart', function(e) {
+        touchStartY = e.changedTouches[0].screenY;
+    });
+
+    document.addEventListener('touchend', function(e) {
+        touchEndY = e.changedTouches[0].screenY;
+        handleSwipe();
+    });
+
+    function handleSwipe() {
+        const swipeThreshold = 50;
+        const diff = touchStartY - touchEndY;
+
+        if (Math.abs(diff) > swipeThreshold) {
+            if (diff > 0) {
+                // 向上滑动
+                const currentSection = getCurrentSection();
+                const nextSection = getNextSection(currentSection);
+                if (nextSection) {
+                    scrollToSection(nextSection.id);
                 }
-            } catch (error) {
-                console.error('注册失败:', error);
-                alert('注册失败，请重试');
+            } else {
+                // 向下滑动
+                const currentSection = getCurrentSection();
+                const prevSection = getPrevSection(currentSection);
+                if (prevSection) {
+                    scrollToSection(prevSection.id);
+                }
             }
         }
+    }
+
+    function getCurrentSection() {
+        const sections = document.querySelectorAll('section[id]');
+        const scrollPosition = window.scrollY + window.innerHeight / 2;
+        
+        for (let section of sections) {
+            const sectionTop = section.offsetTop;
+            const sectionBottom = sectionTop + section.offsetHeight;
+            
+            if (scrollPosition >= sectionTop && scrollPosition < sectionBottom) {
+                return section;
+            }
+        }
+        return sections[0];
+    }
+
+    function getNextSection(currentSection) {
+        const sections = Array.from(document.querySelectorAll('section[id]'));
+        const currentIndex = sections.indexOf(currentSection);
+        return sections[currentIndex + 1] || null;
+    }
+
+    function getPrevSection(currentSection) {
+        const sections = Array.from(document.querySelectorAll('section[id]'));
+        const currentIndex = sections.indexOf(currentSection);
+        return sections[currentIndex - 1] || null;
+    }
+
+    // 添加页面加载动画
+    window.addEventListener('load', function() {
+        document.body.style.opacity = '0';
+        document.body.style.transition = 'opacity 0.5s ease';
+        
+        setTimeout(() => {
+            document.body.style.opacity = '1';
+        }, 100);
+    });
+
+    // 添加错误处理
+    window.addEventListener('error', function(e) {
+        console.error('页面错误:', e.error);
+    });
+
+    // 性能优化：防抖函数
+    function debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    }
+
+    // 优化滚动事件
+    const optimizedScrollHandler = debounce(function() {
+        // 滚动相关的处理逻辑
+    }, 16); // 约60fps
+
+    window.addEventListener('scroll', optimizedScrollHandler);
+
+    // 登录弹窗逻辑
+    const openAuthModal = document.getElementById('openAuthModal');
+    const authModal = document.getElementById('authModal');
+    const closeAuthModal = document.getElementById('closeAuthModal');
+    const loginTab = document.getElementById('loginTab');
+    const registerTab = document.getElementById('registerTab');
+    const loginForm = document.getElementById('loginForm');
+    const registerForm = document.getElementById('registerForm');
+    // 打开弹窗
+    openAuthModal.onclick = function(e) {
+        e.preventDefault();
+        authModal.classList.add('show');
+        authModal.classList.remove('hide');
+        authModal.style.display = 'flex';
+        setTimeout(()=>{
+            authModal.classList.add('show');
+        }, 10);
+    };
+    // 关闭弹窗
+    function closeModal() {
+        authModal.classList.remove('show');
+        authModal.classList.add('hide');
+        setTimeout(()=>{
+            authModal.style.display = 'none';
+            authModal.classList.remove('hide');
+        }, 350);
+    }
+    closeAuthModal.onclick = closeModal;
+    window.onclick = function(e) { if (e.target === authModal) closeModal(); };
+    // 表单切换动画
+    loginTab.onclick = function() {
+        if(loginTab.classList.contains('active')) return;
+        loginTab.classList.add('active');
+        registerTab.classList.remove('active');
+        registerForm.classList.remove('active');
+        registerForm.classList.add('slide-right');
+        setTimeout(()=>{
+            registerForm.classList.remove('slide-right');
+            loginForm.classList.add('active');
+            loginForm.classList.remove('slide-left');
+        }, 200);
+    };
+    registerTab.onclick = function() {
+        if(registerTab.classList.contains('active')) return;
+        registerTab.classList.add('active');
+        loginTab.classList.remove('active');
+        loginForm.classList.remove('active');
+        loginForm.classList.add('slide-left');
+        setTimeout(()=>{
+            loginForm.classList.remove('slide-left');
+            registerForm.classList.add('active');
+            registerForm.classList.remove('slide-right');
+        }, 200);
+    };
+    // 登录表单提交
+    loginForm.onsubmit = async function(e) {
+        e.preventDefault();
+        const username = document.getElementById('login-username').value.trim();
+        const password = document.getElementById('login-password').value;
+        const res = await fetch('/api/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, password })
+        });
+        const data = await res.json();
+        if (data.success) {
+            alert('登录成功！');
+            window.location.href = '/分区界面/index2.html';
+        } else {
+            alert(data.message || '登录失败');
+        }
+    };
+    // 注册表单提交
+    registerForm.onsubmit = async function(e) {
+        e.preventDefault();
+        const username = document.getElementById('register-username').value.trim();
+        const password = document.getElementById('register-password').value;
+        const res = await fetch('/api/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, password })
+        });
+        const data = await res.json();
+        if (data.success) {
+            alert('注册成功，请登录！');
+            registerTab.classList.remove('active');
+            loginTab.classList.add('active');
+            registerForm.classList.remove('active');
+            loginForm.classList.add('active');
+        } else {
+            alert(data.message || '注册失败');
+        }
+    };
+}); 
     </script>
 </body>
-
-</html>
+</html> 
