@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>实用性增强模块 - 图片格式转化</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body { background: #f4f6fa; min-height: 100vh; margin: 0; font-family: 'Noto Sans SC', sans-serif; }
+        .dashboard-container { display: flex; height: 100vh; }
+        .sidebar { width: 260px; background: #fff; box-shadow: 2px 0 16px rgba(37,99,235,0.06); display: flex; flex-direction: column; align-items: center; padding-top: 40px; }
+        .avatar { width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; margin-bottom: 32px; box-shadow: 0 4px 16px rgba(37,99,235,0.10); }
+        .avatar i { color: #fff; font-size: 2.5rem; }
+        .sidebar-menu { width: 100%; display: flex; flex-direction: column; gap: 24px; }
+        .sidebar-menu-item { width: 100%; padding: 22px 0; text-align: center; font-size: 1.2rem; font-weight: 600; color: #2563eb; background: #f4f6fa; border-radius: 12px 0 0 12px; cursor: pointer; transition: background 0.2s, color 0.2s; }
+        .sidebar-menu-item.active { background: linear-gradient(90deg, #2563eb 0%, #667eea 100%); color: #fff; }
+        .main-content { flex: 1; padding: 60px 40px; }
+        .block-title { font-size: 1.6rem; font-weight: 700; color: #2563eb; margin-bottom: 24px; }
+        .block-desc {
+            font-size: 1.18rem;
+            color: #2a3d6a;
+            background: rgba(227, 240, 255, 0.85);
+            border-radius: 12px;
+            padding: 18px 28px;
+            margin-bottom: 32px;
+            margin-top: 0;
+            line-height: 1.8;
+            font-weight: 500;
+            box-shadow: 0 2px 12px rgba(37,99,235,0.06);
+            letter-spacing: 0.5px;
+        }
+        .block-content {
+            background: linear-gradient(135deg, #e3f0ff 0%, #f5faff 100%);
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(37,99,235,0.06);
+            padding: 32px;
+            min-height: 300px;
+        }
+        .upload-area { border: 2px dashed #2563eb; border-radius: 16px; background: #f8fafc; padding: 80px 0; text-align: center; color: #2563eb; cursor: pointer; transition: border-color 0.2s, background 0.2s; margin-bottom: 20px; position: relative; }
+        .upload-area.dragover { border-color: #667eea; background: #e6edfa; }
+        .upload-area i { font-size: 2.2rem; margin-bottom: 8px; color: #2563eb; }
+        .upload-area .upload-text { font-size: 1.1rem; color: #2563eb; margin-bottom: 0; }
+        .file-list { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; }
+        .file-item { display: flex; align-items: center; padding: 8px 12px; background: #f0f9ff; border: 1px solid #e0f2fe; border-radius: 8px; font-size: 0.9rem; color: #2563eb; max-width: 200px; }
+        .file-item i { margin-right: 8px; font-size: 1.1rem; }
+        .file-item .file-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .file-item .remove-btn { margin-left: 8px; background: none; border: none; color: #ef4444; cursor: pointer; font-size: 1.1rem; padding: 0; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: background 0.2s; }
+        .file-item .remove-btn:hover { background: #fee2e2; }
+        .encrypt-btn { background: linear-gradient(45deg, #2563eb, #667eea); color: #fff; border: none; padding: 12px 32px; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 12px rgba(37,99,235,0.2); display: inline-block; }
+        .encrypt-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(37,99,235,0.3); }
+        .encrypt-btn:disabled { background: #ccc; cursor: not-allowed; transform: none; box-shadow: none; }
+        @media (max-width: 900px) { .dashboard-container { flex-direction: column; } .sidebar { width: 100%; flex-direction: row; padding-top: 0; height: 120px; box-shadow: 0 2px 12px rgba(37,99,235,0.06); } .avatar { margin: 20px 32px 20px 20px; } .sidebar-menu { flex-direction: row; gap: 0; width: auto; } .sidebar-menu-item { border-radius: 12px 12px 0 0; padding: 18px 24px; } .main-content { padding: 24px 8px; } .block-content { padding: 16px; } .upload-area { padding: 36px 0; } .file-list { gap: 8px; } }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="sidebar">
+            <div class="avatar">
+                <i class="fas fa-toolbox"></i>
+            </div>
+            <div class="sidebar-menu">
+                <div class="sidebar-menu-item active">图片格式转化</div>
+            </div>
+        </div>
+        <div class="main-content">
+            <div class="block-content">
+                <div class="block-title">图片格式转化</div>
+                <div class="block-desc" style="margin-bottom:32px;">
+                  本模块为您提供高效、便捷的图片及文档格式转换工具。支持多种主流图片格式（JPG、PNG、PDF、BMP等）及文档格式（TXT、CSV等）之间的相互转换，满足日常办公、资料归档、批量处理等多样化需求。拖拽上传、批量转换、结果一键下载，极大提升您的工作效率。
+                </div>
+                <form class="form-area" onsubmit="event.preventDefault();convertFormat();" style="flex-direction:column;align-items:stretch;">
+                  <div class="upload-area" id="format-upload-area" onclick="document.getElementById('format-file').click();">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <div class="upload-text">点击或拖拽文件到此处上传</div>
+                    <input type="file" id="format-file" style="display:none;" multiple />
+                  </div>
+                  <div class="file-list" id="format-file-list"></div>
+                  <div style="display:flex;gap:16px;align-items:center;justify-content:center;margin-bottom:18px;">
+                    <select id="target-format">
+                      <option value="pdf">PDF</option>
+                      <option value="jpg">JPG</option>
+                      <option value="png">PNG</option>
+                      <option value="txt">TXT</option>
+                    </select>
+                    <button type="submit" class="encrypt-btn">开始转换</button>
+                  </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script>
+        let formatFiles = [];
+        const formatFileInput = document.getElementById('format-file');
+        const formatUploadArea = document.getElementById('format-upload-area');
+        const formatFileList = document.getElementById('format-file-list');
+        function renderFormatFileList() {
+          formatFileList.innerHTML = '';
+          formatFiles.forEach((file, idx) => {
+            const ext = file.name.split('.').pop().toLowerCase();
+            let icon = 'fa-file';
+            if(['jpg','jpeg','png','bmp','gif','webp'].includes(ext)) icon = 'fa-file-image';
+            else if(['pdf'].includes(ext)) icon = 'fa-file-pdf';
+            else if(['txt','csv','json','xml'].includes(ext)) icon = 'fa-file-alt';
+            else if(['xlsx','xls'].includes(ext)) icon = 'fa-file-excel';
+            formatFileList.innerHTML += `<div class="file-item"><i class="fas ${icon}"></i><span class="file-name" title="${file.name}">${file.name.length>14?file.name.slice(0,6)+'...'+file.name.slice(-6):file.name}</span><button class="remove-btn" onclick="removeFormatFile(${idx})"><i class='fas fa-times'></i></button></div>`;
+          });
+        }
+        function removeFormatFile(idx) {
+          formatFiles.splice(idx,1);
+          renderFormatFileList();
+        }
+        formatFileInput.addEventListener('change', e => {
+          for(const file of e.target.files) formatFiles.push(file);
+          renderFormatFileList();
+          formatFileInput.value = '';
+        });
+        formatUploadArea.addEventListener('dragover', e => { e.preventDefault(); formatUploadArea.classList.add('dragover'); });
+        formatUploadArea.addEventListener('dragleave', e => { formatUploadArea.classList.remove('dragover'); });
+        formatUploadArea.addEventListener('drop', e => {
+          e.preventDefault();
+          formatUploadArea.classList.remove('dragover');
+          for(const file of e.dataTransfer.files) formatFiles.push(file);
+          renderFormatFileList();
+        });
+        function convertFormat() {
+          if (!formatFiles.length) { alert('请选择文件'); return; }
+          const targetFormat = document.getElementById('target-format').value;
+          formatFiles.forEach(file => {
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('target_format', targetFormat);
+            fetch('/api/convert_format', { method: 'POST', body: formData })
+              .then(res => {
+                if (res.ok) return res.blob();
+                else return res.json().then(data => { throw new Error(data.message); });
+              })
+              .then(blob => {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'converted.' + targetFormat;
+                a.click();
+                URL.revokeObjectURL(url);
+              })
+              .catch(e => alert('转换失败：' + e.message));
+          });
+        }
+    </script>
+</body>
+</html> 
